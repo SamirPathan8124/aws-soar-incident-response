@@ -57,7 +57,23 @@ aws-soar-incident-response/
 
 ## Setup steps
 
-1. ✅ **Foundation:** budget alert, CloudTrail (multi-region, management events), SNS topic `security-alerts` ⏳ screenshots
+1. ✅ **Foundation:** budget alert, CloudTrail (multi-region, management events), SNS topic `security-alerts`
+
+   | Budget alarm | CloudTrail | SNS confirmed |
+   |---|---|---|
+   | 
+
+![Budget](docs/screenshots/01-budget.png)
+
+ | 
+
+![CloudTrail](docs/screenshots/02-cloudtrail.png)
+
+ | 
+
+![SNS](docs/screenshots/03-sns-confirmed.png)
+
+ |
 2. ⏳ **S3 public bucket:** EventBridge rule + Lambda remediation
 3. ⏳ **Open SSH port 22:** EventBridge rule + Lambda remediation
 4. ⏳ **Root login alert**
