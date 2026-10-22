@@ -34,7 +34,7 @@ AWS Account activity
    SNS ──► Email / Slack alert
 ```
 
-⏳ Architecture diagram: `architecture/architecture.png`
+⏳ Architecture diagram: `architecture/diagram.md`
 
 ## Tech stack
 

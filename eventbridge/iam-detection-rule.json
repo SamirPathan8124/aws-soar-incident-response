@@ -1,0 +1,7 @@
+{
+  "source": ["aws.signin", "aws.iam"],
+  "detail-type": ["AWS Console Sign In via CloudTrail", "AWS API Call via CloudTrail"],
+  "detail": {
+    "eventName": ["ConsoleLogin", "CreateAccessKey", "AttachUserPolicy", "AttachRolePolicy", "AttachGroupPolicy"]
+  }
+}
