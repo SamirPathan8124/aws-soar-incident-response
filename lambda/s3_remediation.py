@@ -1,9 +1,13 @@
 import os
+import uuid
+from datetime import datetime, timezone
+
 import boto3
 from botocore.exceptions import ClientError
 
 s3 = boto3.client("s3")
 sns = boto3.client("sns")
+table = boto3.resource("dynamodb").Table(os.environ["INCIDENT_TABLE"])
 
 TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
 
@@ -13,6 +17,24 @@ BLOCK_ALL = {
     "BlockPublicPolicy": True,
     "RestrictPublicBuckets": True,
 }
+
+
+def log_incident(bucket, event_name, user, ip, status):
+    try:
+        failed = status.startswith("FAILED")
+        table.put_item(Item={
+            "incident_id": str(uuid.uuid4()),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "type": "S3_PUBLIC_ACCESS",
+            "resource": bucket,
+            "severity": "HIGH",
+            "action": "REMEDIATION_FAILED" if failed else "BLOCK_PUBLIC_ACCESS_RESTORED",
+            "actor": user,
+            "source_ip": ip,
+            "trigger_event": event_name,
+        })
+    except Exception as e:
+        print(f"Incident log failed: {e}")
 
 
 def is_fully_blocked(bucket):
@@ -75,6 +97,7 @@ def lambda_handler(event, context):
         f"Action: Block Public Access re-enabled\n"
         f"Result: {status}"
     )
+    log_incident(bucket, event_name, user, ip, status)
     sns.publish(
         TopicArn=TOPIC_ARN,
         Subject=f"[SECURITY] S3 bucket {bucket}: {status}"[:100],
