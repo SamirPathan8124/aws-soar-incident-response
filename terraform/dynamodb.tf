@@ -1,4 +1,5 @@
 resource "aws_dynamodb_table" "incidents" {
+  #checkov:skip=CKV_AWS_119:Table uses AWS-managed encryption; a customer-managed KMS key adds cost and key policy overhead
   name         = "soar-incidents"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "incident_id"

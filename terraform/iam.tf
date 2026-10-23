@@ -52,8 +52,12 @@ resource "aws_iam_role" "sg_remediation" {
 
 data "aws_iam_policy_document" "sg_remediation" {
   statement {
-    actions   = ["ec2:DescribeSecurityGroups", "ec2:RevokeSecurityGroupIngress"]
+    actions   = ["ec2:DescribeSecurityGroups"]
     resources = ["*"]
+  }
+  statement {
+    actions   = ["ec2:RevokeSecurityGroupIngress"]
+    resources = ["arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:security-group/*"]
   }
   statement {
     actions   = ["sns:Publish"]
@@ -130,4 +134,16 @@ resource "aws_iam_role_policy" "slack_notifier" {
 resource "aws_iam_role_policy_attachment" "slack_notifier_logs" {
   role       = aws_iam_role.slack_notifier.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "xray" {
+  for_each = {
+    s3    = aws_iam_role.s3_remediation.name
+    sg    = aws_iam_role.sg_remediation.name
+    iam   = aws_iam_role.iam_detection.name
+    slack = aws_iam_role.slack_notifier.name
+  }
+
+  role       = each.value
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }

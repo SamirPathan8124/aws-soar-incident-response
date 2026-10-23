@@ -38,6 +38,14 @@ data "archive_file" "slack_notifier" {
 }
 
 resource "aws_lambda_function" "s3_remediation" {
+  #checkov:skip=CKV_AWS_272:Code signing needs an AWS Signer pipeline, overkill for this project
+  #checkov:skip=CKV_AWS_117:VPC needs a NAT gateway (cost); function only calls AWS APIs and Slack
+  #checkov:skip=CKV_AWS_116:Failures are caught by CloudWatch alarms to SNS; DLQ is in Future Work
+  #checkov:skip=CKV_AWS_115:Reserved concurrency can fail on new accounts with low limits; in Future Work
+  #checkov:skip=CKV_AWS_173:Env vars hold no secrets (table name, topic ARN, SSM path)
+  tracing_config {
+    mode = "Active"
+  }
   function_name    = "soar-s3-remediation"
   role             = aws_iam_role.s3_remediation.arn
   runtime          = "python3.12"
@@ -57,6 +65,14 @@ resource "aws_lambda_function" "s3_remediation" {
 }
 
 resource "aws_lambda_function" "sg_remediation" {
+  #checkov:skip=CKV_AWS_272:Code signing needs an AWS Signer pipeline, overkill for this project
+  #checkov:skip=CKV_AWS_117:VPC needs a NAT gateway (cost); function only calls AWS APIs and Slack
+  #checkov:skip=CKV_AWS_116:Failures are caught by CloudWatch alarms to SNS; DLQ is in Future Work
+  #checkov:skip=CKV_AWS_115:Reserved concurrency can fail on new accounts with low limits; in Future Work
+  #checkov:skip=CKV_AWS_173:Env vars hold no secrets (table name, topic ARN, SSM path)
+  tracing_config {
+    mode = "Active"
+  }
   function_name    = "soar-sg-remediation"
   role             = aws_iam_role.sg_remediation.arn
   runtime          = "python3.12"
@@ -77,6 +93,14 @@ resource "aws_lambda_function" "sg_remediation" {
 
 # IAM events us-east-1 mein aate hain, isliye ye Lambda wahan hai
 resource "aws_lambda_function" "iam_detection" {
+  #checkov:skip=CKV_AWS_272:Code signing needs an AWS Signer pipeline, overkill for this project
+  #checkov:skip=CKV_AWS_117:VPC needs a NAT gateway (cost); function only calls AWS APIs and Slack
+  #checkov:skip=CKV_AWS_116:Failures are caught by CloudWatch alarms to SNS; DLQ is in Future Work
+  #checkov:skip=CKV_AWS_115:Reserved concurrency can fail on new accounts with low limits; in Future Work
+  #checkov:skip=CKV_AWS_173:Env vars hold no secrets (table name, topic ARN, SSM path)
+  tracing_config {
+    mode = "Active"
+  }
   provider         = aws.use1
   function_name    = "soar-iam-detection"
   role             = aws_iam_role.iam_detection.arn
@@ -97,6 +121,14 @@ resource "aws_lambda_function" "iam_detection" {
 }
 
 resource "aws_lambda_function" "slack_notifier" {
+  #checkov:skip=CKV_AWS_272:Code signing needs an AWS Signer pipeline, overkill for this project
+  #checkov:skip=CKV_AWS_117:VPC needs a NAT gateway (cost); function only calls AWS APIs and Slack
+  #checkov:skip=CKV_AWS_116:Failures are caught by CloudWatch alarms to SNS; DLQ is in Future Work
+  #checkov:skip=CKV_AWS_115:Reserved concurrency can fail on new accounts with low limits; in Future Work
+  #checkov:skip=CKV_AWS_173:Env vars hold no secrets (table name, topic ARN, SSM path)
+  tracing_config {
+    mode = "Active"
+  }
   function_name    = "soar-slack-notifier"
   role             = aws_iam_role.slack_notifier.arn
   runtime          = "python3.12"
