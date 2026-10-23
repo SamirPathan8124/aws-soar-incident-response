@@ -223,3 +223,8 @@ __pycache__/
 __pycache__/
 .pytest_cache/
 *.pyc
+.terraform/
+*.tfstate
+*.tfstate.backup
+terraform/build/
+*.zip
