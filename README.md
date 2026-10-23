@@ -89,7 +89,7 @@ Every incident is stored in the DynamoDB table `soar-incidents` (partition key `
 
 
 
-![Bucket auto-remediated](docs/screenshots/13-bucket-auto-remediated.png)
+![Bucket auto-remediated](docs/screenshots/13-bucket-auto-remediated-on.png)
 
 
 
