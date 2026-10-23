@@ -1,10 +1,32 @@
 import os
+import uuid
+from datetime import datetime, timezone
+
 import boto3
 
 ec2 = boto3.client("ec2")
 sns = boto3.client("sns")
+table = boto3.resource("dynamodb").Table(os.environ["INCIDENT_TABLE"])
 TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
 PORT = 22
+
+
+def log_incident(incident_type, resource, severity, action, event):
+    try:
+        detail = event.get("detail", {})
+        table.put_item(Item={
+            "incident_id": str(uuid.uuid4()),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "type": incident_type,
+            "resource": resource,
+            "severity": severity,
+            "action": action,
+            "actor": detail.get("userIdentity", {}).get("arn", "unknown"),
+            "source_ip": detail.get("sourceIPAddress", "unknown"),
+            "trigger_event": detail.get("eventName", "unknown"),
+        })
+    except Exception as e:
+        print(f"Incident log failed: {e}")
 
 
 def covers_ssh(p):
@@ -52,5 +74,6 @@ def lambda_handler(event, context):
         f"Rules removed: {len(removed)}"
     )
     print(msg)
+    log_incident("OPEN_SSH_SECURITY_GROUP", sg_id, "HIGH", "REVOKED_RULE", event)
     sns.publish(TopicArn=TOPIC_ARN, Subject="SOAR: open SSH rule removed", Message=msg)
     return {"status": "remediated", "security_group": sg_id}
